@@ -6,8 +6,6 @@ import fetchCountries from './js/fetchCountries';
 import pnotifyPop from './js/components/pnotify';
 import * as util from './js/update-articles-markup';
 
-let arrayLength = 0;
-
 refs.inputRef.addEventListener('input', _.debounce(handleQuerry, 500));
 refs.inputRef.addEventListener('change', handleInputClear);
 refs.btnRef.addEventListener('click', util.handleClearMarkup);
@@ -15,8 +13,14 @@ refs.btnRef.addEventListener('click', util.handleClearMarkup);
 function handleQuerry(event) {
   util.handleClearMarkup();
   const query = event.target.value;
+  let arrayLength = 0;
+
+  if (query === '') {
+    return;
+  }
 
   fetchCountries(query)
+    .then(res => res.json())
     .then(data => {
       arrayLength = data.length;
       return data;
@@ -33,7 +37,8 @@ function handleQuerry(event) {
       }
 
       arrayLength = 0;
-    });
+    })
+    .catch(error => console.log('Ошибка'));
 }
 
 function handleInputClear() {
