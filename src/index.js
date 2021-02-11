@@ -4,6 +4,7 @@ const _ = require('lodash');
 import refs from './js/refs';
 import fetchCountries from './js/fetchCountries';
 import * as util from './js/update-articles-markup';
+import pnotifyPop from './js/components/pnotify';
 
 refs.inputRef.addEventListener('input', _.debounce(handleQuerry, 500));
 refs.inputRef.addEventListener('change', handleInputClear);
@@ -17,7 +18,19 @@ function handleQuerry(event) {
     return;
   }
 
-  fetchCountries(query);
+  fetchCountries(query)
+    .then(data => {
+      if (data.length >= 2 && data.length < 11) {
+        util.updateCountryListMarkup(data);
+      }
+      if (data.length === 1) {
+        util.updateCountryMarkup(data);
+      }
+      if (data.length >= 10) {
+        pnotifyPop();
+      }
+    })
+    .catch(error => console.log(error));
 }
 
 function handleInputClear() {
